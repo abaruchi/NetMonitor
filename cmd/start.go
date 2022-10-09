@@ -25,6 +25,7 @@ import (
 	"fmt"
 	"github.com/abaruchi/NetMonitor/pkg/monitor"
 	"sync"
+	"time"
 
 	"github.com/spf13/cobra"
 )
@@ -38,32 +39,43 @@ var startCmd = &cobra.Command{
 	Short: "Start NetMon tool.",
 	Run: func(cmd *cobra.Command, args []string) {
 		fmt.Println("start called")
-		var wg sync.WaitGroup
 
-		tempContHosts := monitor.ContinentHosts{
-			America: []string{"https://www.unam.mx/", "https://www.wellsfargo.com/", "https://www.ctvnews.ca/", "https://www.lapresse.ca/"},
-			Oceania: []string{"https://www.nsw.gov.au/", "https://www.optus.com.au/", "https://www.telstra.com.au/", "https://www.amazon.com.au/"},
-			Asia:    []string{"http://www.gmarket.co.kr/", "https://www.360.cn/", "https://www.sina.com.cn/"},
-			Europe:  []string{"https://www.tagesschau.de/", "https://www.sapo.pt/", "https://www.ad.nl/"},
-			Africa:  []string{"https://www.standardbank.co.za/southafrica/personal/home", "https://www.unisa.ac.za/sites/corporate/default"},
+		for range time.Tick(3 * time.Minute) {
+			runMonitor()
 		}
 
-		wg.Add(1)
-		go func() {
-			t := monitor.SpeedCalculator(tempContHosts)
-			fmt.Printf("SpeedDownload: %v\n", t)
-			wg.Done()
-		}()
-
-		wg.Add(1)
-		go func() {
-			l := monitor.LantencyAvg(tempContHosts)
-			fmt.Printf("Latency: %v\n", l)
-			wg.Done()
-		}()
-		wg.Wait()
 	},
 }
+
+func runMonitor() {
+
+	fmt.Println("Starting Task!\n")
+	tempContHosts := monitor.ContinentHosts{
+		America: []string{"https://www.unam.mx/", "https://web.mit.edu/", "https://www.ucalgary.ca/", "https://www.lapresse.ca/", "https://www5.usp.br/"},
+		Oceania: []string{"https://www.nsw.gov.au/", "https://www.unimelb.edu.au/", "https://www.telstra.com.au/", "https://www.sydney.edu.au/"},
+		Asia:    []string{"https://www.hanyang.ac.kr/", "http://hust.edu.cn/index.htm", "https://www.sustech.edu.cn/", "https://www.cau.ac.kr/index.do", "https://web.ncku.edu.tw/"},
+		Europe:  []string{"https://www.jacobs-university.de/", "https://www.ulisboa.pt/", "https://www.uminho.pt/PT", "http://www.tu-dresden.de/"},
+		Africa:  []string{"https://www.uct.ac.za/", "https://www.up.ac.za/", "https://www.uonbi.ac.ke/", "https://www.unam.edu.na/"},
+	}
+
+	var wg sync.WaitGroup
+	wg.Add(1)
+	go func() {
+		t := monitor.SpeedCalculator(tempContHosts)
+		fmt.Printf("SpeedDownload: %v\n", t)
+		wg.Done()
+	}()
+
+	wg.Add(1)
+	go func() {
+		l := monitor.LantencyAvg(tempContHosts)
+		fmt.Printf("Latency: %v\n", l)
+		wg.Done()
+	}()
+	wg.Wait()
+	return
+}
+
 
 func init() {
 	rootCmd.AddCommand(startCmd)
