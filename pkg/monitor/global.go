@@ -11,11 +11,12 @@ type tester func(h string) float64
 
 // ContinentHosts represents the Input used to process and evaluate the latency and speed for each continent.
 type ContinentHosts struct {
-    America []string
-    Oceania []string
-    Asia    []string
-    Europe  []string
-    Africa  []string
+    NorthAmerica []string
+    SouthAmerica []string
+    Oceania      []string
+    Asia         []string
+    Europe       []string
+    Africa       []string
 }
 
 // HostsAvg this data struct will store the average value for each value computed.
@@ -27,11 +28,12 @@ type HostsAvg struct {
 // ContinentalEvaluation this is the final goal. After measuring each host and taking the average, we want to output this
 // struct.
 type ContinentalEvaluation struct {
-    America HostsAvg
-    Oceania HostsAvg
-    Asia    HostsAvg
-    Europe  HostsAvg
-    Africa  HostsAvg
+    NorthAmerica HostsAvg
+    SouthAmerica HostsAvg
+    Oceania      HostsAvg
+    Asia         HostsAvg
+    Europe       HostsAvg
+    Africa       HostsAvg
 }
 
 func calculateAvg(values []float64) float64 {
@@ -63,8 +65,12 @@ func ContinentHostsToMap(ch ContinentHosts) map[string][]string {
         chMap["Asia"] = ch.Asia
     }
 
-    if len(ch.America) > 0 {
-        chMap["America"] = ch.America
+    if len(ch.NorthAmerica) > 0 {
+        chMap["NorthAmerica"] = ch.NorthAmerica
+    }
+
+    if len(ch.SouthAmerica) > 0 {
+        chMap["SouthAmerica"] = ch.SouthAmerica
     }
 
     if len(ch.Africa) > 0 {
